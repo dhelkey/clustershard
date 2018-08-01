@@ -1,0 +1,5 @@
+exportPattern("^[[:alpha:]]+")
+
+import("ggplot2")
+importFrom('dplyr', "%>%" ,'group_by', 'select','summarise_all','funs')
+importFrom('mclust', "mclustBIC" )
