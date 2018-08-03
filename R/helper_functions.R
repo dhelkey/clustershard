@@ -12,14 +12,9 @@ lra = function(x){
 
 
 #TODO ADD TESTS for these, especially where we expect ceretain functoins to return a type of code
-
-
-
 plotNull = function(){
 	plot(1, type = 'n', xlab = '', ylab = '', axes = FALSE)
 }
-
-
 
 clusterPlot = function(dat_plot, point_size = 1, level = 0.9, gauss = FALSE){
 	g = ggplot(dat_plot, aes(x = pc1, y = pc2, color = cluster_id)) + 
@@ -35,7 +30,6 @@ scatterPlot = function(dat_plot, element1, element2, point_size = 1){
         geom_point(size = point_size, aes(color = cluster_id))
 }
 
-
 datClusterAvgFun = function(dat_plot, elements){
 	print(colnames(dat_plot))
       mean_cluster = dat_plot %>% group_by(cluster_id) %>% select(cluster_id, elements) %>% summarise_all(mean)
@@ -47,9 +41,6 @@ clusterBar = function(dat_cluster_avg){
          facet_wrap(~variable, scales = 'free') +
          geom_col()
 }
-
-
-
 
 transformDat = function(dat, avg_readings = FALSE, standardize = FALSE,
 	transformation = 'none', offset = 1e-8){
@@ -116,48 +107,55 @@ clusterPotteryDat = function(dat_vals, k, pc_keep = NULL, method = 'gmm' ){
 	))
 	}
 
-	
-	
-	
-	
-
-processPotteryDat = function(file_path, avg_obs = FALSE){
+processPotteryDat = function(filelement_names_path, element_start_column = 3){
 	#'Process pottery data file
 	#'
-	#' Takes in the output from read_csv(...) and processes according to
-	#' the conventionss
+	#' Reads in a csv file for pottery shard concentration
+	#' File should have one row per pottery shard observation
+	#' The SampleNo column in the file should contain the
+	#'  the shard id and the observation number separated by 
+	#'  a "-".
+	#'
+	#'@inputs
+	#' 
 	
-      #Read element names
-      #Element names Li:U
-	  dat_raw = read.csv(file_path)
-      element_names = names(dat_raw)[-(1:2)]
-      element_names_p = stringr::str_sub(gsub("[[:digit:]]",'',element_names),2)
-      
-      #Example ID format: D0506-1a    8/24/2016 1:28:10 PM
-      #WARNING, hardcoded values
-      #This is very prone to breaking if the format changes
-      id_run_list = stringr::str_split(dat_raw$SampleNo,'-')
-      dat_raw$id = sapply(id_run_list, function(x) x[1]) #D0506
-      run_vec = sapply(id_run_list, function(x) x[2])
-      dat_raw$run = stringr::str_sub(run_vec,1, 2) #1a
+	#The first 2 columns need to be ID info
+	stopifnot(element_start_column > 2)
+	
+    #Read in csv from path
+	dat_raw = read.csv(filelement_names_path)
+	  
+	#Remove punctuation from variable names
+	names(dat_raw) = gsub('[[:punct:]]+','',names(dat_raw))
+	  
+	#Extract elements names & remove leading number
+    element_names = names(dat_raw)[-(1:element_start_column - 1)]  
+    element_names_p =  stringr::str_split(element_names, '[[:digit:]]')
+	element_names_p = lapply(element_names_p, tail, 1)
+	element_names_p = as.character(do.call('rbind', element_names_p))
+	
+	#Import element data for validation
+	data(elements)
+	element_names_full = elements$symbol
+	
+	#See if there are any unrecognized elements
+	element_binary = !(element_names_p %in% element_names_full)
+	if(sum(element_binary) > 0){
+		stop( paste0('Unrecognized Elements:', 
+			paste(element_names_p[element_binary], collapse = ',') ))
+	}
+	  
+    #Example ID format: D0506-1a   8/24/2016 1:28:10 PM
+    #WARNING, hardcoded values
+	#This is very prone to breaking if the format changes
+	id_run_list = stringr::str_split(dat_raw$SampleNo,'-')
+
+    dat_raw$id = sapply(id_run_list, function(x) x[1]) #D0506
+	run_vec = sapply(id_run_list, function(x) x[2])
+    dat_raw$run = stringr::str_sub(run_vec,1, 2) #1a
          
-      ###############################
-      ###############################
-	  #TODO - add warnings when it looks like data violates assumptions....
-      ##Remove the zero row (row 76, would want to do this in a better way)
-      #print(dat_raw[76, ])
-      #dat_raw = dat_raw[-76, ]    
-      
-	  #print(head(dat_raw))
-      #Remove File '160812-B' and sort by ID
-      #dat = dat_raw %>% 
-      #  filter(!stringr::str_detect(DataFile, stringr::regex('160812-B', ignore_case = T)) ) %>% 
-      #  arrange(id)
-      ###############################
-      ###############################
-      
-      #Change column names and output clean version to work with 
-      dat = dat_raw[ , c('DataFile', 'id', 'run', element_names)]
-      names(dat) = c('file', 'id', 'run', element_names_p)
-      return(dat)
+    #Change column names and output clean version to work with 
+    dat = dat_raw[ , c('DataFile', 'id', 'run', element_names)]
+    names(dat) = c('file', 'id', 'run', element_names_p)
+    return(list( dat = dat, element_names = element_names_p))
 }

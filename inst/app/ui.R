@@ -1,11 +1,3 @@
-element_names = c("Li","Be","Na","Mg","Al","Si","P","S","K","Ca","Sc","Ti","V","Cr","Mn","Fe","Co","Ni",
-                  "Cu","Zn","As","Rb","Sr","Y","Zr","Ag","Cd","Sn","Sb","Cs","Ba","La","Ce","Pr","Nd",
-                  "Sm","Eu","Gd","Tb","Dy","Ho","Er","Tm","Yb","Lu","Hf","Ta","W","Au", "Tl","Pb","Bi",
-                  "Th","U")
-
-
-
-
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -64,29 +56,31 @@ ui <- fluidPage(
       mainPanel(
 
         tabsetPanel( type = "tabs",
-                     tabPanel("Histogram", selectInput("element", "Element",
-                                                       choices = element_names),
-                              plotOutput("distPlot")),
+                     tabPanel("Histogram",
+                              uiOutput('element'),
+                              plotOutput("distPlot"),
+							  downloadButton('downDistPlot', 'Export Plot')),
 
                      tabPanel("Box Plots",
-                              selectInput("element_choice_box", "Select Elements",
-                                  choices = element_names, multiple = TRUE, selected = element_names[1:10]),
-                              plotOutput("boxPlot")),
+								uiOutput('element_choice_box'),
+                              plotOutput("boxPlot"),
+							  downloadButton('downBoxPlot', 'Export Plot')),
 
                       tabPanel('Cluster Plot',
-                               plotOutput("clusterPlot")),
+                               plotOutput("clusterPlot"),
+							   downloadButton('downClusterPlot', 'Export Plot')),
 
-                     tabPanel('Scatter Plot', selectInput("element1", "Element",
-                                                          choices = element_names,
-                                                          selected = "Li"),
-                              selectInput("element2", "Element",
-                                          choices = element_names, selected = "Be"),
-                              plotOutput("scatterPlot")),
+                     tabPanel('Scatter Plot',
+						uiOutput('element1'),
+						uiOutput('element2'),
+                        plotOutput("scatterPlot"),
+						downloadButton('downScatterPlot', 'Export Plot')),
 
                      tabPanel('Cluster Concentrations',
                               selectInput("element_choice", "Select Elements",
                                           choices = element_names, multiple = TRUE, selected = 'Li'),
-                              plotOutput("clusterBar"))
+                              plotOutput("clusterBar"),
+							  downloadButton('downClusterBar', 'Export Plot'))
                      )
       )
    )

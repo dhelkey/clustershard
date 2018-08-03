@@ -1,15 +1,58 @@
 server <- function(input, output) {
-
-  point_size = 4
-
   #Server function for the graphical tool
+
 
     #Read in data when the input box changes
     datRead = reactive({
       infile = input$file
       if (is.null(infile)){return(NULL)}
-      dat = processPotteryDat(infile$datapath)
+      dat = processPotteryDat(infile$datapath)$dat
+      return(dat)
     })
+
+    datReadElements = reactive({
+      infile = input$file
+      if (is.null(infile)){return(element_names)}
+      element_names = processPotteryDat(infile$datapath)$element_names
+      return(element_names)
+    })
+
+    ##Update elements
+    output$element = renderUI({
+      element_actual_values = datReadElements()
+      selectInput('element',
+                  label = 'Element',
+                  choices = element_actual_values,
+                  selected = 'Li')
+    })
+
+    output$element_choice_box = renderUI({
+      element_actual_values = datReadElements()
+      selectInput('element_choice_box',
+                  label = 'Select Elements',
+                  choices = element_actual_values,
+                  multiple = TRUE,
+                  selected = c('Li', 'Na', 'Mg', 'Si'))
+    })
+
+
+    output$element1 = renderUI({
+      element_actual_values = datReadElements()
+      selectInput('element1',
+                  label = 'Element',
+                  choices = element_actual_values,
+                  selected = 'Li')
+    })
+
+    output$element2 = renderUI({
+      element_actual_values = datReadElements()
+      selectInput('element2',
+                  label = 'Element',
+                  choices = element_actual_values,
+                  selected = 'Be')
+    })
+
+
 
     #Transform data for clustering
     datVals = reactive({
@@ -71,72 +114,148 @@ server <- function(input, output) {
       return( datClusterAvgFun(dat_plot, input$element_choice))
     })
 
-   output$distPlot <- renderPlot({
-    dat_vals = datVals()
-    if (is.null(dat_vals)){
-      plotNull()
-    } else{
-      hist( dat_vals[ ,input$element], main = input$element, xlab = 'value')
+
+  ##Distribution Plot
+  distPlot = function(){
+      dat_vals = datVals()
+      if (is.null(dat_vals)){
+        p = plotNull()
+      } else{
+        p = hist( dat_vals[ ,input$element], main = input$element, xlab = 'value')
+      }
+      return(p)
     }
+   output$distPlot <- renderPlot({
+    distPlot()
+   })
+
+   output$downDistPlot = downloadHandler(
+     filename = function(){
+       'dist_plot.pdf'
+     },
+     content = function(file){
+       png(file)
+       print(distPlot())
+       dev.off()
+     }
+   )
+
+
+   ##Box Plot
+   printBoxPlot = reactive({
+     dat_vals = datVals()
+     dat_vals_use = dat_vals[ ,input$element_choice_box]
+     if (is.null(dat_vals)){
+       p = plotNull()
+     } else{
+       p = boxplot(dat_vals_use, main = 'Element Concentration', ylab = 'Concentration')
+     }
+     return(p)
    })
 
    output$boxPlot = renderPlot({
-     dat_vals = datVals()
-       dat_vals_use = dat_vals[ ,input$element_choice_box]
-     if (is.null(dat_vals)){
-       plotNull()
-     } else{
-         boxplot(dat_vals_use, main = 'Element Concentration', ylab = 'Concentration')
-       }
+      printBoxPlot()
    })
+   output$downBoxPlot = downloadHandler(
+     filename = function(){
+       'box_plot.png'
+     },
+     content = function(file){
+       png(file)
+       print(printBoxPlot())
+       dev.off()
+     }
+   )
 
-   output$clusterPlot = renderPlot({
+
+   printclusterPlot = function(){
      dat_plot = datPlot()
      if (is.null(dat_plot)){
-       plotNull()
+       p = plotNull()
      } else {
        if (input$cluster_method == 'gmm'){
-         clusterPlot(dat_plot, point_size, gauss = TRUE)
+         p = clusterPlot(dat_plot, point_size, gauss = TRUE)
        } else{
-         clusterPlot(dat_plot, point_size)
+         p = clusterPlot(dat_plot, point_size)
        }
      }
+     return(p)
+   }
+   output$clusterPlot = renderPlot({
+      printclusterPlot()
    })
 
-   output$scatterPlot = renderPlot({
-     plotNull()
+   output$downClusterPlot = downloadHandler(
+     filename = function(){
+       'cluster_plot.png'
+     },
+     content = function(file){
+       png(file)
+       print(printclusterPlot())
+       dev.off()
+     }
+   )
+
+
+
+   printScatterPlot = function(){
+     p = plotNull()
      dat_plot = datPlot()
      if (is.null(dat_plot)){
-       plotNull()
+       p = plotNull()
      } else {
-        scatterPlot(dat_plot, input$element1, input$element2,
-                    point_size = point_size)
+       p = scatterPlot(dat_plot, input$element1, input$element2,
+                   point_size = point_size)
      }
+    return(p)
+   }
+   output$scatterPlot = renderPlot({
+      printScatterPlot()
    })
+   output$downScatterPlot = downloadHandler(
+     filename = function(){
+       'scatter_plot.png'
+     },
+     content = function(file){
+       png(file)
+       print(printScatterPlot())
+       dev.off()
+     }
+   )
 
-   output$clusterBar = renderPlot({
-     plotNull()
+
+   ##Cluster bar
+   printClusterBar = function(){
+     p = plotNull()
      dat_cluster_avg = datClusterAvg()
      if (is.null(dat_cluster_avg)){
-       plotNULL()
+       p = plotNULL()
      } else {
-        clusterBar(dat_cluster_avg)
+       p = clusterBar(dat_cluster_avg)
      }
+     return(p)
+   }
+
+   output$clusterBar = renderPlot({
+      printClusterBar()
    })
+
+   output$downClusterBar = downloadHandler(
+     filename = function(){
+       'cluster_bar.png'
+     },
+     content = function(file){
+       png(file)
+       print(printClusterBar())
+       dev.off()
+     }
+   )
+
 
    output$exportData = downloadHandler(
      filename = 'out_data.csv',
      content = function(file){
        write.csv( datPlot(), file, row.names =  FALSE)
      }
-   )
-
-   output$exportPlot = downloadHandler(
-     filename = 'plot.png',
-     content = function(file){
-       device <- function(..., width, height) grDevices::png(..., width = width, height = height, res = 300, units = "in")
-       ggsave(file, device = device)
-     }
-
    )
 }

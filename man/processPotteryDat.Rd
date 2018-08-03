@@ -7,6 +7,7 @@
 processPotteryDat(file_path, avg_obs = FALSE)
 }
 \description{
+Reads in a csv file for pottery shard concentration
 Takes in the output from read_csv(...) and processes according to
 the conventionss
 }
