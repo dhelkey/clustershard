@@ -3,7 +3,6 @@ lra = function(x){
   #'
   #' Transforms a observational row to LRA, 
   #' following Baxter (2006).
-  # stopifnot(round(sum(x)) == 100)
   p = length(x)
   gx = prod(x)^(1/p)
   out = log(x / gx)
@@ -11,39 +10,17 @@ lra = function(x){
 }
 
 
-#TODO ADD TESTS for these, especially where we expect ceretain functoins to return a type of code
-plotNull = function(){
-	plot(1, type = 'n', xlab = '', ylab = '', axes = FALSE)
-}
-
-clusterPlot = function(dat_plot, point_size = 1, level = 0.9, gauss = FALSE){
-	g = ggplot(dat_plot, aes(x = pc1, y = pc2, color = cluster_id)) + 
-	geom_point( size = point_size)
-   if (gauss){
-   g =  g + stat_ellipse(level = level)
-   }	
-   return(g)
-}
-
-scatterPlot = function(dat_plot, element1, element2, point_size = 1){
-	ggplot(dat_plot, aes_string(x = element1, y = element2)) +
-        geom_point(size = point_size, aes(color = cluster_id))
-}
+#TODO ADD TESTS for these, to enforce API is followed
 
 datClusterAvgFun = function(dat_plot, elements){
-	print(colnames(dat_plot))
+	#' Compute mean element concentration by cluster
       mean_cluster = dat_plot %>% group_by(cluster_id) %>% select(cluster_id, elements) %>% summarise_all(mean)
       mean_cluster_long = reshape2::melt(mean_cluster, id.vars = "cluster_id")
 }
 
-clusterBar = function(dat_cluster_avg){
-       ggplot(dat_cluster_avg, aes(x = cluster_id,y = value,  fill = cluster_id))  +
-         facet_wrap(~variable, scales = 'free') +
-         geom_col()
-}
-
 transformDat = function(dat, avg_readings = FALSE, standardize = FALSE,
 	transformation = 'none', offset = 1e-8){
+	#' Transform data matrix
 	
    #Aggregate or not
     if (avg_readings){
@@ -65,7 +42,6 @@ transformDat = function(dat, avg_readings = FALSE, standardize = FALSE,
     } else if (transformation == 'none'){
       dat_vals = dat_vals
     }
-	##TODO do a test to make sure that this yields the same results as putting it in prcomp()
 	if (standardize){
 		dat_vals = scale(dat_vals)
 	}
@@ -74,10 +50,13 @@ transformDat = function(dat, avg_readings = FALSE, standardize = FALSE,
 
 
 
-
 clusterPotteryDat = function(dat_vals, k, pc_keep = NULL, method = 'gmm' ){
-	
-	#Cluster based on principle components transformation of 
+	#' Cluster a data matrix using principle components
+	#'
+	#' /code{clusterPotteryDat} takes in a data matrix, performs a principle
+	#' components transformation, and clusters using the first k components.
+	#'
+	#' @inputs
 	pr = prcomp(dat_vals)
 	pr_comp = as.matrix(pr$x)
 	
@@ -92,12 +71,10 @@ clusterPotteryDat = function(dat_vals, k, pc_keep = NULL, method = 'gmm' ){
 		gmm = mclust::Mclust(pr_comp, G = k)
 		cl_data = gmm$classification
 	}
-	
-	##TODO recode the cluster_id variable in asscending order of avg pc1
+	#Reorder clusters to be increasing in average 1st principle component	
 	cluster_id_old = cl_data
 	pc1 = pr_comp[ ,1]
-	cluster_mean_pc1 = sapply(1:k, 
-							function(i) mean(pc1[cluster_id_old == i]))
+	cluster_mean_pc1 = sapply(1:k,function(i) mean(pc1[cluster_id_old == i]))
 	cluster_order = order(order(cluster_mean_pc1))
 	cluster_id = as.factor(cluster_order[cluster_id_old])
 	
@@ -105,57 +82,6 @@ clusterPotteryDat = function(dat_vals, k, pc_keep = NULL, method = 'gmm' ){
 		cluster_id =cluster_id,
 		pc_mat = pr_comp
 	))
-	}
-
-processPotteryDat = function(filelement_names_path, element_start_column = 3){
-	#'Process pottery data file
-	#'
-	#' Reads in a csv file for pottery shard concentration
-	#' File should have one row per pottery shard observation
-	#' The SampleNo column in the file should contain the
-	#'  the shard id and the observation number separated by 
-	#'  a "-".
-	#'
-	#'@inputs
-	#' 
-	
-	#The first 2 columns need to be ID info
-	stopifnot(element_start_column > 2)
-	
-    #Read in csv from path
-	dat_raw = read.csv(filelement_names_path)
-	  
-	#Remove punctuation from variable names
-	names(dat_raw) = gsub('[[:punct:]]+','',names(dat_raw))
-	  
-	#Extract elements names & remove leading number
-    element_names = names(dat_raw)[-(1:element_start_column - 1)]  
-    element_names_p =  stringr::str_split(element_names, '[[:digit:]]')
-	element_names_p = lapply(element_names_p, tail, 1)
-	element_names_p = as.character(do.call('rbind', element_names_p))
-	
-	#Import element data for validation
-	data(elements)
-	element_names_full = elements$symbol
-	
-	#See if there are any unrecognized elements
-	element_binary = !(element_names_p %in% element_names_full)
-	if(sum(element_binary) > 0){
-		stop( paste0('Unrecognized Elements:', 
-			paste(element_names_p[element_binary], collapse = ',') ))
-	}
-	  
-    #Example ID format: D0506-1a   8/24/2016 1:28:10 PM
-    #WARNING, hardcoded values
-	#This is very prone to breaking if the format changes
-	id_run_list = stringr::str_split(dat_raw$SampleNo,'-')
-
-    dat_raw$id = sapply(id_run_list, function(x) x[1]) #D0506
-	run_vec = sapply(id_run_list, function(x) x[2])
-    dat_raw$run = stringr::str_sub(run_vec,1, 2) #1a
-         
-    #Change column names and output clean version to work with 
-    dat = dat_raw[ , c('DataFile', 'id', 'run', element_names)]
-    names(dat) = c('file', 'id', 'run', element_names_p)
-    return(list( dat = dat, element_names = element_names_p))
 }
+
+

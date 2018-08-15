@@ -1,6 +1,5 @@
 server <- function(input, output) {
-  #Server function for the graphical tool
-
+  #Server function for the GUI
 
     #Read in data when the input box changes
     datRead = reactive({
@@ -35,7 +34,6 @@ server <- function(input, output) {
                   selected = c('Li', 'Na', 'Mg', 'Si'))
     })
 
-
     output$element1 = renderUI({
       element_actual_values = datReadElements()
       selectInput('element1',
@@ -51,8 +49,6 @@ server <- function(input, output) {
                   choices = element_actual_values,
                   selected = 'Be')
     })
-
-
 
     #Transform data for clustering
     datVals = reactive({
@@ -114,7 +110,6 @@ server <- function(input, output) {
       return( datClusterAvgFun(dat_plot, input$element_choice))
     })
 
-
   ##Distribution Plot
   distPlot = function(){
       dat_vals = datVals()
@@ -140,15 +135,14 @@ server <- function(input, output) {
      }
    )
 
-
    ##Box Plot
    printBoxPlot = reactive({
      dat_vals = datVals()
+     p = plotNull()
      dat_vals_use = dat_vals[ ,input$element_choice_box]
-     if (is.null(dat_vals)){
-       p = plotNull()
-     } else{
-       p = boxplot(dat_vals_use, main = 'Element Concentration', ylab = 'Concentration')
+     if (dim(dat_vals_use)[2] > 0){
+       dat_vals_use = dat_vals[ ,input$element_choice_box]
+       p = boxPlot(dat_vals_use)
      }
      return(p)
    })
@@ -156,6 +150,7 @@ server <- function(input, output) {
    output$boxPlot = renderPlot({
       printBoxPlot()
    })
+
    output$downBoxPlot = downloadHandler(
      filename = function(){
        'box_plot.png'
@@ -166,7 +161,6 @@ server <- function(input, output) {
        dev.off()
      }
    )
-
 
    printclusterPlot = function(){
      dat_plot = datPlot()
@@ -196,14 +190,10 @@ server <- function(input, output) {
      }
    )
 
-
-
    printScatterPlot = function(){
      p = plotNull()
      dat_plot = datPlot()
-     if (is.null(dat_plot)){
-       p = plotNull()
-     } else {
+     if (!is.null(dat_plot) & !is.null(input$element1)){
        p = scatterPlot(dat_plot, input$element1, input$element2,
                    point_size = point_size)
      }
@@ -223,14 +213,11 @@ server <- function(input, output) {
      }
    )
 
-
    ##Cluster bar
    printClusterBar = function(){
      p = plotNull()
      dat_cluster_avg = datClusterAvg()
-     if (is.null(dat_cluster_avg)){
-       p = plotNULL()
-     } else {
+     if (!is.null(dat_cluster_avg)){
        p = clusterBar(dat_cluster_avg)
      }
      return(p)
@@ -250,7 +237,6 @@ server <- function(input, output) {
        dev.off()
      }
    )
-
 
    output$exportData = downloadHandler(
      filename = 'out_data.csv',

@@ -1,20 +1,22 @@
 Package: clustershard
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Analyze and Cluster Compositional Pottery Data
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Authors@R: c(person("Daniel", "Helkey", email = "dhelkey@ucsc.edu", role = c("aut", "cre")),
+	person("David", "Draper", email = "draper@ucsc", role = c("ctb")),
+	person("Judith", "Mauche", email = "judith@ucsc.edu", role = c("ctb")))
+Description: This package provides a GUI tool to analyze elemental compositional pottery data.
+    The tool simplifies the process of imporing data, perforing dimentionality reduction (through Principle
+	Component Analyis), and clustering the observations (using k-means or Gaussian mixture modeling).
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
-	ggplot2,
-	shiny,
 	dplyr,
-	stringr,
+	ggplot2,
+	mclust,
 	reshape2,
-	mclust
-RoxygenNote: 6.0.1
+	shiny,
+	stringr
 Suggests: testthat
+RoxygenNote: 6.0.1
