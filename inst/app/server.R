@@ -15,7 +15,6 @@ server <- function(input, output) {
       element_names = processPotteryDat(infile$datapath)$element_names
       return(element_names)
     })
-
     ##Update elements
     output$element = renderUI({
       element_actual_values = datReadElements()
@@ -24,7 +23,6 @@ server <- function(input, output) {
                   choices = element_actual_values,
                   selected = 'Li')
     })
-
     output$element_choice_box = renderUI({
       element_actual_values = datReadElements()
       selectInput('element_choice_box',
@@ -33,7 +31,6 @@ server <- function(input, output) {
                   multiple = TRUE,
                   selected = c('Li', 'Na', 'Mg', 'Si'))
     })
-
     output$element1 = renderUI({
       element_actual_values = datReadElements()
       selectInput('element1',
@@ -41,7 +38,6 @@ server <- function(input, output) {
                   choices = element_actual_values,
                   selected = 'Li')
     })
-
     output$element2 = renderUI({
       element_actual_values = datReadElements()
       selectInput('element2',
@@ -49,7 +45,16 @@ server <- function(input, output) {
                   choices = element_actual_values,
                   selected = 'Be')
     })
+    output$element_choice_bar = renderUI({
+      element_actual_values = datReadElements()
+      selectInput('element_choice_bar',
+                  label = 'Element',
+                  choices = element_actual_values,
+                  multiple = TRUE,
+                  selected = element_actual_values[1:5])
+    })
 
+    ##Transform data
     #Transform data for clustering
     datVals = reactive({
       dat = datRead()
@@ -77,9 +82,9 @@ server <- function(input, output) {
       dat_vals = datVals() #Transforms data according to inputs
       if (is.null(dat_vals)){return(NULL)}
       dat_cluster = clusterPotteryDat(dat_vals,
-                                  k = input$k,
-                                  method = input$cluster_method,
-                                  pc_keep = input$num_pc)
+                                      k = input$k,
+                                      method = input$cluster_method,
+                                      pc_keep = input$num_pc)
       return(dat_cluster) #List with two elements, cluster_id and pc_mat
     })
 
@@ -100,14 +105,11 @@ server <- function(input, output) {
       )
       return(dat_plot)
     })
-
-
-    ##Compute average concentration by cluster for barplots
-    ##Barplot,
+    #Compute average concentration by cluster for barplots
     datClusterAvg = reactive({
       dat_plot = datPlot()
-      if (is.null(dat_plot)){return(NULL)}
-      return( datClusterAvgFun(dat_plot, input$element_choice))
+      if (is.null(dat_plot) | is.null(input$element_choice_bar)){return(NULL)}
+      return( datClusterAvgFun(dat_plot, input$element_choice_bar))
     })
 
   ##Distribution Plot

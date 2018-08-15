@@ -40,7 +40,7 @@ ui <- fluidPage(
 
         #Analysis Transformation
         selectInput("transform_plot",
-                    "Analysis Transformation (Visualizations )",
+                    "Visualization Transformation Method",
                     choices = list('None' = 'none', 'Log' = 'log',  'Log-Ratio Analysis' = 'lra' ),
                     selected = 'log'),
 
@@ -77,8 +77,7 @@ ui <- fluidPage(
 						downloadButton('downScatterPlot', 'Export Plot')),
 
                      tabPanel('Cluster Concentrations',
-                              selectInput("element_choice", "Select Elements",
-                                          choices = element_names, multiple = TRUE, selected = 'Li'),
+                              uiOutput('element_choice_bar'),
                               plotOutput("clusterBar"),
 							  downloadButton('downClusterBar', 'Export Plot'))
                      )
