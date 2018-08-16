@@ -48,39 +48,38 @@ ui <- fluidPage(
                      choiceValues = c(TRUE, FALSE), selected = FALSE ),
 
          downloadButton("exportData", 'Export Data')
-
-        #downloadButton("exportPlot", 'Export Plot')
       ),
 
-      # Show a plot of the generated distribution
+      #Main panel, one tab per graph
       mainPanel(
-
         tabsetPanel( type = "tabs",
                      tabPanel("Histogram",
-                              uiOutput('element'),
-                              plotOutput("distPlot"),
-							  downloadButton('downDistPlot', 'Export Plot')),
+                        uiOutput('element'),
+                        plotOutput("distPlot"),
+							          downloadButton('downDistPlot', 'Export Plot')),
 
                      tabPanel("Box Plots",
-								uiOutput('element_choice_box'),
-                              plotOutput("boxPlot"),
-							  downloadButton('downBoxPlot', 'Export Plot')),
+							        	uiOutput('element_choice_box'),
+                        plotOutput("boxPlot"),
+							          downloadButton('downBoxPlot', 'Export Plot')),
 
-                      tabPanel('Cluster Plot',
-                               plotOutput("clusterPlot"),
-							   downloadButton('downClusterPlot', 'Export Plot')),
+                     tabPanel('Cluster Plot',
+                       plotOutput("clusterPlot"),
+							         downloadButton('downClusterPlot', 'Export Plot')),
 
                      tabPanel('Scatter Plot',
-						uiOutput('element1'),
-						uiOutput('element2'),
+            						uiOutput('element1'),
+            						uiOutput('element2'),
                         plotOutput("scatterPlot"),
-						downloadButton('downScatterPlot', 'Export Plot')),
+					           	  downloadButton('downScatterPlot', 'Export Plot')),
 
                      tabPanel('Cluster Concentrations',
-                              uiOutput('element_choice_bar'),
-                              plotOutput("clusterBar"),
-							  downloadButton('downClusterBar', 'Export Plot'))
+                        uiOutput('element_choice_bar'),
+                        plotOutput("clusterBar"),
+							          downloadButton('downClusterBar', 'Export Plot')
+							         )
                      )
+                   )
+
       )
-   )
 )

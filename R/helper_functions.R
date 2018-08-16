@@ -10,27 +10,26 @@ lra = function(x){
 }
 
 
-#TODO ADD TESTS for these, to enforce API is followed
-
+#TODO ADD TESTS to enforce API
 datClusterAvgFun = function(dat_plot, elements){
 	#' Compute mean element concentration by cluster
       mean_cluster = dat_plot %>% group_by(cluster_id) %>% select(cluster_id, elements) %>% summarise_all(mean)
       mean_cluster_long = reshape2::melt(mean_cluster, id.vars = "cluster_id")
 }
 
-transformDat = function(dat, avg_readings = FALSE, standardize = FALSE,
+transformDat = function(dat, elements,
+    avg_readings = FALSE, standardize = FALSE,
 	transformation = 'none', offset = 1e-8){
-	#' Transform data matrix
-	
-   #Aggregate or not
-    if (avg_readings){
-	##TODO Li:U - set elemenet names globaly
-		dat_use = dat %>% group_by(id)%>% select(id, Li:U) %>% summarise_all(funs(mean))
+	#'Extract and Transform Element Composition Values
+	#'
+	#' \code{transformDat} extracts 
+    if (avg_readings){ #Aggregate observations by averaging
+		dat_use = dat %>% group_by(id)%>% select(id, elements) %>% summarise_all(funs(mean))
     } else {
-      dat_use = dat %>% select(id, Li:U)
+      dat_use = dat %>% select(id, elements)
     }
     #Extract numeric values
-    dat_vals  = as.matrix(select(dat_use, Li:U))
+    dat_vals  = as.matrix(select(dat_use, elements))
     
     #Remove small values
     dat_vals[dat_vals <= 0 ] = offset

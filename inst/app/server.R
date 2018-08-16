@@ -58,8 +58,10 @@ server <- function(input, output) {
     #Transform data for clustering
     datVals = reactive({
       dat = datRead()
+      elements = datReadElements()
       if (is.null(dat)){return(NULL)}
       dat_vals = transformDat(dat,
+                              elements = elements,
                               avg_readings = input$avg_readings,
                               transformation = input$transform_cluster,
                               standardize = input$standardize_cluster)
@@ -69,8 +71,10 @@ server <- function(input, output) {
     #Transform data for potting
     datValsPlot = reactive({
       dat = datRead()
+      elements = datReadElements()
       if (is.null(dat)){return(NULL)}
       dat_vals = transformDat(dat,
+                              elements = elements,
                               avg_readings = input$avg_readings,
                               transformation = input$transform_plot,
                               standardize = input$standardize_plot)
