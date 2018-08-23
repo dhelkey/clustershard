@@ -2,11 +2,11 @@
 % Please edit documentation in R/helper_functions.R
 \name{transformDat}
 \alias{transformDat}
-\title{Transform data matrix}
+\title{Extract and Transform Element Composition Values}
 \usage{
-transformDat(dat, avg_readings = FALSE, standardize = FALSE,
+transformDat(dat, elements, avg_readings = FALSE, standardize = FALSE,
   transformation = "none", offset = 1e-08)
 }
 \description{
-Transform data matrix
+\code{transformDat} extracts
 }

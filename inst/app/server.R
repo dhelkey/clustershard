@@ -15,6 +15,7 @@ server <- function(input, output) {
       element_names = processPotteryDat(infile$datapath)$element_names
       return(element_names)
     })
+
     ##Update elements
     output$element = renderUI({
       element_actual_values = datReadElements()
@@ -55,8 +56,7 @@ server <- function(input, output) {
     })
 
     ##Transform data
-    #Transform data for clustering
-    datVals = reactive({
+    datVals = reactive({ #Transform the data for clustering
       dat = datRead()
       elements = datReadElements()
       if (is.null(dat)){return(NULL)}
@@ -69,7 +69,7 @@ server <- function(input, output) {
     })
 
     #Transform data for potting
-    datValsPlot = reactive({
+    datValsPlot = reactive({ #Transform data for plotting
       dat = datRead()
       elements = datReadElements()
       if (is.null(dat)){return(NULL)}
@@ -81,9 +81,8 @@ server <- function(input, output) {
       return(dat_vals)
     })
 
-    #Cluster
-    datCluster = reactive({
-      dat_vals = datVals() #Transforms data according to inputs
+    datCluster = reactive({ #Cluster observations
+      dat_vals = datVals()
       if (is.null(dat_vals)){return(NULL)}
       dat_cluster = clusterPotteryDat(dat_vals,
                                       k = input$k,
@@ -92,8 +91,8 @@ server <- function(input, output) {
       return(dat_cluster) #List with two elements, cluster_id and pc_mat
     })
 
-    #Generate a dataframe for plotting/visualization
-    datPlot = reactive({
+
+    datPlot = reactive({  #Generate a dataframe for plotting/visualization
       dat_cluster = datCluster()
       dat_vals = datValsPlot()
       #Extract
@@ -109,8 +108,8 @@ server <- function(input, output) {
       )
       return(dat_plot)
     })
-    #Compute average concentration by cluster for barplots
-    datClusterAvg = reactive({
+
+    datClusterAvg = reactive({#Compute average concentration by cluster for barplots
       dat_plot = datPlot()
       if (is.null(dat_plot) | is.null(input$element_choice_bar)){return(NULL)}
       return( datClusterAvgFun(dat_plot, input$element_choice_bar))
@@ -129,7 +128,6 @@ server <- function(input, output) {
    output$distPlot <- renderPlot({
     distPlot()
    })
-
    output$downDistPlot = downloadHandler(
      filename = function(){
        'dist_plot.pdf'
@@ -140,7 +138,6 @@ server <- function(input, output) {
        dev.off()
      }
    )
-
    ##Box Plot
    printBoxPlot = reactive({
      dat_vals = datVals()
@@ -152,11 +149,9 @@ server <- function(input, output) {
      }
      return(p)
    })
-
    output$boxPlot = renderPlot({
       printBoxPlot()
    })
-
    output$downBoxPlot = downloadHandler(
      filename = function(){
        'box_plot.png'
@@ -167,7 +162,7 @@ server <- function(input, output) {
        dev.off()
      }
    )
-
+   ##Cluster scatter plot
    printclusterPlot = function(){
      dat_plot = datPlot()
      if (is.null(dat_plot)){
@@ -184,7 +179,6 @@ server <- function(input, output) {
    output$clusterPlot = renderPlot({
       printclusterPlot()
    })
-
    output$downClusterPlot = downloadHandler(
      filename = function(){
        'cluster_plot.png'
@@ -195,7 +189,7 @@ server <- function(input, output) {
        dev.off()
      }
    )
-
+  ##Element concentration scatter plot
    printScatterPlot = function(){
      p = plotNull()
      dat_plot = datPlot()
