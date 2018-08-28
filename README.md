@@ -29,6 +29,8 @@ The first row of the CSV should be a header row, with a SampleNo column, and col
 Identifying information about each measurement should be stored in a SampleNo column. This column should consist of text strings. The first element in the string should be an entry of the form "shardID-measurmentNum". Here, shardID is a unique identifier for each shard (e.g. D0506) and measurmentNum is an identifier for each measurement of the shard (e.g. 1a, 1b, 2a). Any extraneous information following this first dash separated value (e.g. a timestamp) is ignored by this package.
 
 
+Example data
+
 DataFile	| SampleNo |	7Li |	9Be |	23Na |	24Mg |	27Al |	29Si |	31P |	33S |	39K
 ---| ---| ---| ---| ---| ---| ---| ---| ---| ---| ---| 
 160824-A	|D0506-1a    8/24/2016 1:28:10 PM	|0.007235833	| 0.000278074	| 0.344942658 |	0.638880939 |	10.12715041	 |43.54705309	 | 0.12743092 |	0.087898704	| 1.069493988 
@@ -36,7 +38,11 @@ DataFile	| SampleNo |	7Li |	9Be |	23Na |	24Mg |	27Al |	29Si |	31P |	33S |	39K
 
 
 
+###Usage
 
+Guide to the GUI of clustertool
+
+![clustertool GUI](/inst/figures/ui.png)
 
 
 
