@@ -42,7 +42,7 @@ DataFile	| SampleNo |	7Li |	9Be |	23Na |	24Mg |	27Al |	29Si |	31P |	33S |	39K
 
 Guide to the GUI of clustertool
 
-![clustertool GUI](/inst/figures/ui.png)
+![clustertool GUI](https://github.com/dhelkey/clustershard/blob/master/inst/figures/ui.PNG)
 
 
 
