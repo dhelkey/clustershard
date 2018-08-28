@@ -1,87 +1,62 @@
-# Project Title
+# clustershard
 
-One Paragraph of project description goes here
+This package provides a GUI tool to analyze elemental compositional pottery data.
+    The tool simplifies the process of importing data, performing dimensionality reduction (through Principle Component Analysis), and clustering the observations (using k-means or Gaussian mixture modeling).
+
 
 ## Getting Started
+clustershard must first be loaded into R (requires the *devtools* package) using:
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-What things you need to install the software and how to install them
 
 ```
-Give examples
+devtools::install_github('dhelkey/dgrank', force = TRUE)
+library('dgrank')
 ```
+The GUI tool for clustering and analysis can then be run with:
 
-### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
 
 ```
-Give the example
+clusterTool()
 ```
 
-And repeat
 
-```
-until finished
-```
+### Data
+clustershard assumes data is stored on a CSV file with one row for every measurement taken (there can be multiple rows for each specimen if it is measured multiple times).
 
-End with an example of getting some data out of the system or using it for a little demo
+The first row of the CSV should be a header row, with a SampleNo column, and columns with element names. The element names should start at column 3 (TODO can be set when running clusterTool). Element names can include numbers (for example the atomic mass of the element). Element names are compared with the periodic table and any unrecognized element names will throw an error. All columns to the right of the starting element column will be parsed as elements. Therefore, any superfluous columns need to be at the start of the CSV file, before the element starting column.
 
-## Running the tests
+Identifying information about each measurement should be stored in a SampleNo column. This column should consist of text strings. The first element in the string should be an entry of the form "shardID-measurmentNum". Here, shardID is a unique identifier for each shard (e.g. D0506) and measurmentNum is an identifier for each measurement of the shard (e.g. 1a, 1b, 2a). Any extraneous information following this first dash separated value (e.g. a timestamp) is ignored by this package.
 
-Explain how to run the automated tests for this system
 
-### Break down into end to end tests
+DataFile	| SampleNo |	7Li |	9Be |	23Na |	24Mg |	27Al |	29Si |	31P |	33S |	39K
+---| ---| ---| ---| ---| ---| ---| ---| ---| ---| ---| 
+160824-A	|D0506-1a    8/24/2016 1:28:10 PM	|0.007235833	| 0.000278074	| 0.344942658 |	0.638880939 |	10.12715041	 |43.54705309	 | 0.12743092 |	0.087898704	| 1.069493988 
+160824-A	| D0506-1b    8/24/2016 1:30:26 PM	| 0.008610675	| 0.00052367 |	0.430605991	| 0.608618339	| 10.88459596	| 41.68874081	| 0.11672563	| 0.23707953	| 1.054835438
 
-Explain what these tests test and why
 
-```
-Give an example
-```
 
-### And coding style tests
 
-Explain what these tests test and why
 
-```
-Give an example
-```
 
-## Deployment
 
-Add additional notes about how to deploy this on a live system
 
-## Built With
+## Author
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* **Daniel Helkey** 
 
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+All contributors listed in the package [DESCRIPTION](DESCRIPTION).
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* Judith Mauche proposed and funded the project, through [TODO agency or grant].
+
+* David Draper set up the collaboration and provided statistical consulting for the clustering tool.
+
+* R package constructed with extensive referral to to [R Packages by Hadley Wickham](http://r-pkgs.had.co.nz/intro.html)
+
+* Readme.md file from [template](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
