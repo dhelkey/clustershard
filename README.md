@@ -4,8 +4,15 @@ This package provides a GUI tool to analyze elemental compositional pottery data
     The tool simplifies the process of importing data, performing dimensionality reduction (through Principle Component Analysis), and clustering the observations (using k-means or Gaussian mixture modeling).
 
 
+	
+## Overview
+*clustershard* provides a GUI tool (*clusterTool*) for performing analysis on pottery shard data. Data is first imported from a CSV file and then the tool allows for different transformations. A clustering method (Gaussian Mixture Models or K-means) is then applied to a principle components decomposition of the transformed data. Finally, the tool provides methods for analyzing the results and exporting the resulting plots and data.
+
+
+	
+	
 ## Getting Started
-clustershard must first be loaded into R (requires the *devtools* package) using:
+*clustershard* must first be loaded into R (requires the *devtools* package be installed) using:
 
 
 ```
@@ -21,8 +28,9 @@ clusterTool()
 ```
 
 
+
 ### Data
-clustershard assumes data is stored on a CSV file with one row for every measurement taken (there can be multiple rows for each specimen if it is measured multiple times).
+*clusterTool* assumes data is stored on a CSV file with one row for every measurement taken (there can be multiple rows for each specimen if it is measured multiple times).
 
 The first row of the CSV should be a header row, with a SampleNo column, and columns with element names. The element names should start at column 3 (TODO can be set when running clusterTool). Element names can include numbers (for example the atomic mass of the element). Element names are compared with the periodic table and any unrecognized element names will throw an error. All columns to the right of the starting element column will be parsed as elements. Therefore, any superfluous columns need to be at the start of the CSV file, before the element starting column.
 
@@ -42,10 +50,35 @@ DataFile	| SampleNo |	7Li |	9Be |	23Na |	24Mg |	27Al |	29Si |	31P |	33S |	39K
 
 Guide to the GUI of clustertool
 
-![clustertool GUI](https://github.com/dhelkey/clustershard/blob/master/inst/figures/ui.PNG)
+![clustertool GUI](https://github.com/dhelkey/clustershard/blob/master/inst/figures/ui_numbered.PNG)
 
+clusterTool components:
 
+1. Import data from a CSV file (see above for format requirements).
 
+2. Desired number of clusters.
+
+3. Number of principle components on which the clustering is based.
+
+4. Clustering method (Gaussian Mixture Models or K-means).
+
+5. If TRUE, multiple observations of the same shard are combined into one reading by averaging element concentrations.
+
+6. Data standardization. If TRUE, element concentration values are normalized to have mean 0 and standard deviation 1.
+
+7. Data transformation. Options are 'None' for no transformation, 'Log' to take the natural log of each measurement, or 'LRA' which uses a Log-Ratio Analysis transformation (see [Baxter & Freestone (2006)](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1475-4754.2006.00270.x) for details). This setting changes the data used to perform, and different settings will change the clustering results.
+
+8. Visualization Transformation. Options are the same as above ('None', 'Log', 'LRA'). This transformation does NOT affect clustering results, but does affect the scale on which analysis plots are displayed.
+
+9. Visualization data standardization. If true, element concentration values for plots are normalized to have mean 0 and standard deviation 1. This will not affect clustering results.
+
+10. Allows user to export data along with clustering results.
+
+11. Tabs for viewing the 5 different plots that *clusterTool* provides.
+
+12. Drop down menu for selecting elements of interest.
+
+13. Each plot provides a button to export the image to file.
 
 ## Author
 
