@@ -46,7 +46,7 @@ DataFile	| SampleNo |	7Li |	9Be |	23Na |	24Mg |	27Al |	29Si |	31P |	33S |	39K
 
 
 
-###Usage
+### Usage
 
 Guide to the GUI of clustertool
 
