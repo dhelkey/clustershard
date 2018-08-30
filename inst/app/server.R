@@ -1,6 +1,16 @@
 server <- function(input, output) {
   #Server function for the GUI
 
+  #Extract variables
+  element_start_column = getShinyOption('element_start_column')
+  width = getShinyOption('width')
+  height = getShinyOption('height')
+  pointsize = getShinyOption('pointsize')
+  point_size = getShinyOption('point_size')
+  cex = getShinyOption('cex')
+  element_names = getShinyOption('element_names')
+
+
     #Read in data when the input box changes
     datRead = reactive({
       infile = input$file
@@ -130,10 +140,11 @@ server <- function(input, output) {
    })
    output$downDistPlot = downloadHandler(
      filename = function(){
+       #TODO check on format
        'dist_plot.pdf'
      },
      content = function(file){
-       png(file)
+       png(file, width = width, height = height, pointsize = pointsize)
        print(distPlot())
        dev.off()
      }
@@ -157,7 +168,7 @@ server <- function(input, output) {
        'box_plot.png'
      },
      content = function(file){
-       png(file)
+       png(file, width = width, height = height, pointsize = pointsize)
        print(printBoxPlot())
        dev.off()
      }
@@ -184,7 +195,7 @@ server <- function(input, output) {
        'cluster_plot.png'
      },
      content = function(file){
-       png(file)
+       png(file, width = width, height = height, pointsize = pointsize)
        print(printclusterPlot())
        dev.off()
      }
@@ -207,7 +218,7 @@ server <- function(input, output) {
        'scatter_plot.png'
      },
      content = function(file){
-       png(file)
+       png(file, width = width, height = height, pointsize = pointsize)
        print(printScatterPlot())
        dev.off()
      }
@@ -232,7 +243,7 @@ server <- function(input, output) {
        'cluster_bar.png'
      },
      content = function(file){
-       png(file)
+       png(file, width = width, height = height, pointsize = pointsize)
        print(printClusterBar())
        dev.off()
      }
