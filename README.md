@@ -7,13 +7,13 @@ This package provides a GUI tool to analyze elemental compositional pottery data
 ## Overview
 *clustershard* provides a GUI tool (*clusterTool*) for performing analysis on pottery shard data. Data is first imported from a CSV file and then the tool allows for different transformations. A clustering method (Gaussian Mixture Models or K-means) is then applied to a principle components decomposition of the transformed data. Finally, the tool provides methods for analyzing the results and exporting the resulting plots and data.
 
-[Getting Started](google.com)
+[Getting Started](ttps://github.com/dhelkey/clustershard#getting-started)
 
-[clusterTool Overview]
+[Tool Overview](ttps://github.com/dhelkey/clustershard#tool-overview)
 
-[Data Format](https://github.com/dhelkey/clustershard#data)
+[Data Format](https://github.com/dhelkey/clustershard#data-format)
 
-[Options]
+[Options](ttps://github.com/dhelkey/clustershard#options)
 
 
 
@@ -37,7 +37,7 @@ The GUI tool for clustering and analysis can then be run with:
 clusterTool()
 ```
 
-## clusterTool Overview
+## Tool Overview
 
 Guide to the GUI of clustertool
 
