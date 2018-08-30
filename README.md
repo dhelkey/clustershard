@@ -1,5 +1,7 @@
 # clustershard
 
+this is a test change
+
 This package provides a GUI tool to analyze elemental compositional pottery data.
     The tool simplifies the process of importing data, performing dimensionality reduction (through Principle Component Analysis), and clustering the observations (using k-means or Gaussian mixture modeling).
 
