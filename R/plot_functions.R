@@ -2,18 +2,18 @@ plotNull = function(){
 	plot(1, type = 'n', xlab = '', ylab = '', axes = FALSE)
 }
 
-clusterPlot = function(dat_plot, point_size = 1, level = 0.9, gauss = FALSE){
+clusterPlot = function(dat_plot, marker_size = 1, level = 0.9, gauss = FALSE){
 	g = ggplot(dat_plot, aes_string(x = 'pc1', y = 'pc2', color = 'cluster_id')) + 
-	geom_point( size = point_size)
+	geom_point( size = marker_size)
 	if (gauss){
 		g =  g + stat_ellipse(level = level)
 	}	
 	return(g)
 }
 
-scatterPlot = function(dat_plot, element1, element2, point_size = 1){
+scatterPlot = function(dat_plot, element1, element2, marker_size = 1){
 	ggplot(dat_plot, aes_string(x = element1, y = element2)) +
-        geom_point(size = point_size, aes(color = cluster_id))
+        geom_point(size = marker_size, aes(color = cluster_id))
 }
 
 boxPlot = function(dat_vals){

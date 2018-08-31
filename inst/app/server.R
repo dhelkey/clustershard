@@ -2,11 +2,12 @@ server <- function(input, output) {
   #Server function for the GUI
 
   #Extract variables
-  element_start_column = getShinyOption('element_start_column')
+  id_column = getShinyOption('id_column')
+  element_start_column = getShinyOption('element_start_column') #TODO make sure this works
   width = getShinyOption('width')
   height = getShinyOption('height')
   pointsize = getShinyOption('pointsize')
-  point_size = getShinyOption('point_size')
+  marker_size = getShinyOption('marker_size')
   cex = getShinyOption('cex')
   element_names = getShinyOption('element_names')
 
@@ -15,14 +16,20 @@ server <- function(input, output) {
     datRead = reactive({
       infile = input$file
       if (is.null(infile)){return(NULL)}
-      dat = processPotteryDat(infile$datapath)$dat
+      dat = processPotteryDat(infile$datapath,
+                              id_column = id_column,
+                              element_start_column = element_start_column
+                              )$dat
       return(dat)
     })
 
     datReadElements = reactive({
       infile = input$file
       if (is.null(infile)){return(element_names)}
-      element_names = processPotteryDat(infile$datapath)$element_names
+      element_names = processPotteryDat(infile$datapath,
+                                        id_column = id_column,
+                                        element_start_column = element_start_column
+                                        )$element_names
       return(element_names)
     })
 
@@ -180,9 +187,9 @@ server <- function(input, output) {
        p = plotNull()
      } else {
        if (input$cluster_method == 'gmm'){
-         p = clusterPlot(dat_plot, point_size, gauss = TRUE)
+         p = clusterPlot(dat_plot, marker_size, gauss = TRUE)
        } else{
-         p = clusterPlot(dat_plot, point_size)
+         p = clusterPlot(dat_plot, marker_size)
        }
      }
      return(p)
@@ -206,7 +213,7 @@ server <- function(input, output) {
      dat_plot = datPlot()
      if (!is.null(dat_plot) & !is.null(input$element1)){
        p = scatterPlot(dat_plot, input$element1, input$element2,
-                   point_size = point_size)
+                   marker_size = marker_size)
      }
     return(p)
    }

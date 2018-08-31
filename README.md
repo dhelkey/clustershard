@@ -7,19 +7,16 @@ This package provides a GUI tool to analyze elemental compositional pottery data
 ## Overview
 *clustershard* provides a GUI tool (*clusterTool*) for performing analysis on pottery shard data. Data is first imported from a CSV file and then the tool allows for different transformations. A clustering method (Gaussian Mixture Models or K-means) is then applied to a principle components decomposition of the transformed data. Finally, the tool provides methods for analyzing the results and exporting the resulting plots and data.
 
-[Getting Started](ttps://github.com/dhelkey/clustershard#getting-started)
+[Getting Started](https://github.com/dhelkey/clustershard#getting-started)
 
-[Tool Overview](ttps://github.com/dhelkey/clustershard#tool-overview)
+[Tool Overview](https://github.com/dhelkey/clustershard#tool-overview)
 
 [Data Format](https://github.com/dhelkey/clustershard#data-format)
 
-[Options](ttps://github.com/dhelkey/clustershard#options)
+[Options](https://github.com/dhelkey/clustershard#options)
 
+[Acknowledgments](https://github.com/dhelkey/clustershard#acknowledgments)
 
-
-Acknowledgments
-
-	
 	
 ## Getting Started
 *clustershard* must first be loaded into R (requires the *devtools* package be installed) using:
@@ -32,20 +29,18 @@ library('dgrank')
 The GUI tool for clustering and analysis can then be run with:
 
 
-
 ```
 clusterTool()
 ```
 
 ## Tool Overview
 
-Guide to the GUI of clustertool
+
 
 ![clustertool GUI](https://github.com/dhelkey/clustershard/blob/master/inst/figures/ui_numbered.PNG)
 
-clusterTool components:
 
-1. Import data from a CSV file (see above for format requirements).
+1. Import data from a CSV file ([format requirements](https://github.com/dhelkey/clustershard#data-format)).
 
 2. Desired number of clusters.
 
@@ -53,7 +48,7 @@ clusterTool components:
 
 4. Clustering method (Gaussian Mixture Models or K-means).
 
-5. If TRUE, multiple observations of the same shard are combined into one reading by averaging element concentrations.
+5. Data averaging. If TRUE, multiple observations of the same shard are combined into one reading by averaging element concentrations.
 
 6. Data standardization. If TRUE, element concentration values are normalized to have mean 0 and standard deviation 1.
 
@@ -63,7 +58,7 @@ clusterTool components:
 
 9. Visualization data standardization. If true, element concentration values for plots are normalized to have mean 0 and standard deviation 1. This will not affect clustering results.
 
-10. Allows user to export data along with clustering results.
+10. Export data along with clustering results.
 
 11. Tabs for viewing the 5 different plots that *clusterTool* provides.
 
@@ -72,24 +67,29 @@ clusterTool components:
 13. Each plot provides a button to export the image to file.
 
 
-
-
-
-
 ## Data Format
 *clusterTool* assumes data is stored on a CSV file with one row for every measurement taken (there can be multiple rows for each specimen if it is measured multiple times).
 
-The first row of the CSV should be a header row, with a SampleNo column, and columns with element names. The element names should start at column 3 (TODO can be set when running clusterTool). Element names can include numbers (for example the atomic mass of the element). Element names are compared with the periodic table and any unrecognized element names will throw an error. All columns to the right of the starting element column will be parsed as elements. Therefore, any superfluous columns need to be at the start of the CSV file, before the element starting column.
+The first row of the CSV should be a header row, with a SampleNo column, and columns with element names. The element names should start at at a fixed column, and continue to the end of the sheet(This can be set when running clusterTool() and defaults to 3). Element names can include numbers (for example the atomic mass of the element). Element names are compared with the periodic table and any unrecognized element names will throw an error. All columns to the right of the starting element column will be parsed as elements. Therefore, any superfluous columns need to be at the start of the CSV file, before the element starting column.
 
-Identifying information about each measurement should be stored in a SampleNo column. This column should consist of text strings. The first element in the string should be an entry of the form "shardID-measurmentNum". Here, shardID is a unique identifier for each shard (e.g. D0506) and measurmentNum is an identifier for each measurement of the shard (e.g. 1a, 1b, 2a). Any extraneous information following this first dash separated value (e.g. a timestamp) is ignored by this package.
+Identifying information about each measurement should be stored in a SampleNo column.  This column should consist of text strings. The first element in the string should be an entry of the form "shardID-measurmentNum". Here, shardID is a unique identifier for each shard (e.g. D0506) and measurmentNum is an identifier for each measurement of the shard (e.g. 1a, 1b, 2a). Any extraneous information following this first dash separated value (e.g. a timestamp) is ignored by this package.
 
 
-Example data
+###Example Acceptable Formats
+
+By default, clusterTool assumes that numeric data starts at column 3 (from the left) and shard identifying information is in column 2. The DataFile column is ignored and numbers are removed when parsed by clusterTool:
 
 DataFile	| SampleNo |	7Li |	9Be |	23Na |	24Mg |	27Al |	29Si |	31P |	33S |	39K
 ---| ---| ---| ---| ---| ---| ---| ---| ---| ---| ---| 
 160824-A	|D0506-1a    8/24/2016 1:28:10 PM	|0.007235833	| 0.000278074	| 0.344942658 |	0.638880939 |	10.12715041	 |43.54705309	 | 0.12743092 |	0.087898704	| 1.069493988 
 160824-A	| D0506-1b    8/24/2016 1:30:26 PM	| 0.008610675	| 0.00052367 |	0.430605991	| 0.608618339	| 10.88459596	| 41.68874081	| 0.11672563	| 0.23707953	| 1.054835438
+
+
+
+ SampleNo |	Li |	Be |	Na 
+---| ---| ---| ---| ---| ---| ---| ---| ---| ---| ---| 
+D0501-a|0.007235833	| 0.000278074	| 0.344942658 |	0.638880939
+D042-c| 0.008610675	| 0.00052367 |	0.430605991	| 0.608618339	
 
 ## Options
 
